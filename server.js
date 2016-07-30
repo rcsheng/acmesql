@@ -21,7 +21,7 @@ app.use('/categories',categoriesRouter);
 
 app.get('/',function(req,res)
 {
-	console.log('here');
+	//console.log('here');
 	res.render('index',{categories: db.getCategories()});
 
 
