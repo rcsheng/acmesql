@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' />
+  </head>
+  <body>
+    <ul class='nav nav-tabs' style='margin-bottom:10px'>
+      <li {% if !selectedCategory.length %} class='active'{% endif %}>
+        <a href='/'>Home</a>
+      </li>
+		{% for category in categories %}
+		 <li {% if category == selectedCategory %} class='active'{% endif %}>
+          <a href='/categories/{{category}}'>{{category}}</a>
+        </li>
+	
+		{% endfor %}
+     </ul>
+
+	{% block content %}
+	{% endblock %}
+  </body>
+</html>
