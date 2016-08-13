@@ -8,8 +8,8 @@
         <a href='/'>Home</a>
       </li>
 		{% for category in categories %}
-		 <li {% if category == selectedCategory %} class='active'{% endif %}>
-          <a href='/categories/{{category}}'>{{category}}</a>
+		 <li {% if category.id == selectedCategory %} class='active'{% endif %}>
+          <a href='/categories/{{category.id}}'>{{category.name}}</a>
         </li>
 	
 		{% endfor %}

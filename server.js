@@ -8,7 +8,9 @@ app.set('views','./views');
 app.set('view engine','html');
 app.engine('html',swig.renderFile);
 
-var db = require('./db');
+var db = require('./db/db');
+
+db.connect();
 
 var bodyParser = require('body-parser');
 
@@ -21,9 +23,12 @@ app.use('/categories',categoriesRouter);
 
 app.get('/',function(req,res)
 {
-	//console.log('here');
-	res.render('index',{categories: db.getCategories()});
 
+	console.log('here');
+	db.getCategories().then(function(results){
+		//console.log('app get', results); // shows undefineds
+		res.render('index',{categories: results});
+	});
 
 });
 

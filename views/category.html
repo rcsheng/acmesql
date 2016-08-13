@@ -22,7 +22,7 @@
 
 		<li class='list-group-item'>
 		  {{product.name}}
-		  <form method='POST' class='pull-right' style='display:inline' action='/categories/{{selectedCategory}}/products/{{loop.index}}?_method=DELETE'>
+		  <form method='POST' class='pull-right' style='display:inline' action='/categories/{{selectedCategory}}/products/{{product.id}}?_method=DELETE'>
 		    <button type='submit' class='btn btn-danger'>Delete Product</button>
 		  </form>
 		  <br clear='all' />

@@ -1,5 +1,5 @@
 var router = require('express').Router();
-var db = require('../db');
+var db = require('../db/db');
 var methodOverride = require('method-override');
 
 router.use(methodOverride('_method'));
@@ -7,39 +7,72 @@ router.use(methodOverride('_method'));
 
 router.post('/', function(req,res)
 {
-	db.newCategory(req.body.categoryName);
-	res.redirect('/categories/'+req.body.categoryName);
+	var categoryID;
+	var categoryName =req.body.categoryName; 
+	db.newCategory(categoryName)
+	.then(function()
+	{
+		return db.getCategoryId(categoryName);
+	})
+	.then(function(category)
+	{
+		console.log('before render:',category[0].id);
+		res.redirect('/categories/'+category[0].id);
+	});
+	
 });
 
 
-router.get('/:category',function(req,res)
+router.get('/:categoryid',function(req,res)
 {
-	//console.log('get categories!');
-	var categoryName = req.params.category;
-	res.render('category',{categories: db.getCategories(), selectedCategory: categoryName, products: db.getProducts(categoryName)});
+	
+	var category_id = req.params.categoryid;
+	var categories;
+	db.getCategories()
+	.then(function(results){
+			categories = results;
+			return db.getProducts(category_id);
+		})
+	.then(function(products)
+	{
+		console.log('products for ',category_id,' are: ',products);
+		res.render('category',{categories: categories, selectedCategory: category_id, products: products});
+	});
+	
 });
 
-router.delete('/:category',function(req,res)
+router.delete('/:categoryid',function(req,res)
 {
 	//console.log('deleting ',req.params.category);
-	db.deleteCategory(req.params.category);
-	res.redirect('/');
+	db.deleteCategory(req.params.categoryid)
+	.then(function()
+	{
+		res.redirect('/');
+	});
+	
 })
 
-router.post('/:category/products',function(req,res)
+router.post('/:categoryid/products',function(req,res)
 {
 	//console.log('adding product!');
 	
-	db.addProduct(req.params.category, req.body.productName);
-	res.redirect('/categories/'+req.params.category);
+	db.addProduct(req.params.categoryid, req.body.productName)
+	.then(
+		res.redirect('/categories/'+req.params.categoryid)
+		);
+	
 
 });
 
-router.delete('/:category/products/:index',function(req,res)
+router.delete('/:categoryid/products/:productid',function(req,res)
 {
-	//console.log('deleting product ',req.params.category,Number(req.params.index)-1);
-	db.deleteProduct(req.params.category, Number(req.params.index)-1);
-	res.redirect('/categories/'+req.params.category);
+	console.log('deleting product ',req.params.categoryid,Number(req.params.productid));
+	db.deleteProduct(req.params.categoryid, Number(req.params.productid))
+	.then(function()
+		{
+			res.redirect('/categories/'+req.params.categoryid);
+		});
+	
 })
 
 module.exports = router;
