@@ -10,28 +10,27 @@ app.engine('html',swig.renderFile);
 
 var db = require('./db/db');
 
-db.connect();
+db.connect();//don't connect here-- separate out this code into app.js and server.js
+//if your going to test connection, do it in server.js
 
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
-var router = express.Router();
 var categoriesRouter = require('./routes/categories');
 
 app.use('/categories',categoriesRouter);
 
-app.get('/',function(req,res)
-{
-
-	console.log('here');
-	db.getCategories().then(function(results){
-		//console.log('app get', results); // shows undefineds
-		res.render('index',{categories: results});
-	});
-
+app.get('/', function(req,res){
+	db.getCategories().then(function(categories){
+		res.render('index', { categories: categories });
+	})
+  .catch(function(err){
+    next(err);
+  });
 });
 
+//use environment variables and connect in separate file
 app.listen(3000,function(err)
 {
 	if (err)
